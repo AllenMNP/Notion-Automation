@@ -37,8 +37,13 @@ def turnToJSON(result):
     with open('./db.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False)
 
+print("Starting Application")
+
 currentDay = datetime.today()
 payloads = Payload()
+
+print("Current Month: ", currentDay.month)
+print("Current Day: ", currentDay.day)
 
 if(currentDay.day == 10):
     creditCardPayload = json.dumps(payloads.getCreditCardPayload())
