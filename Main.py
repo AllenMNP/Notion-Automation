@@ -1,7 +1,14 @@
 import Constants
 import requests, json
+from Filter import Filter
 from Payload import Payload
 from datetime import datetime
+
+# Tutorial Video: https://www.youtube.com/watch?v=sdn1HgxLwEg
+
+# Things To Do:
+#   Create an Automatic Archiver
+#   Create an Automatic Deleter
 
 headers = {
     "Accept": "application/json",
@@ -16,9 +23,9 @@ def getDatabase(databaseId, headers):
 
     return result
 
-def queryDatabase(databaseId, headers):
+def queryDatabase(databaseId, headers, filter):
     getDatabaseRequestEndpoint = f"https://api.notion.com/v1/databases/{databaseId}/query"
-    result = requests.request(Constants.POST_REQUEST, getDatabaseRequestEndpoint, headers=headers)
+    result = requests.post(getDatabaseRequestEndpoint, headers=headers, json=filter)
 
     return result
 
@@ -30,29 +37,34 @@ def getDatabasePage(pageId, headers):
 
 def createPage(payload, headers):
     postPageEndpoint = "https://api.notion.com/v1/pages"
-    requests.request(Constants.POST_REQUEST, postPageEndpoint, headers=headers, data=payload)
+    requests.post(postPageEndpoint, headers=headers, data=payload)
 
 def turnToJSON(result):
     data = result.json()
-    with open('./db.json', 'w', encoding='utf-8') as f:
+    with open('readme.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False)
 
 print("Starting Application")
 
 currentDay = datetime.today()
 payloads = Payload()
+filters = Filter()
 
 print("Current Month: ", currentDay.month)
 print("Current Day: ", currentDay.day)
 
 if(currentDay.day == 10):
-    creditCardPayload = json.dumps(payloads.getCreditCardPayload())
-    createPage(creditCardPayload, headers)
-elif(currentDay.day == 20):
-    rentPayload = json.dumps(payloads.getRentPayload())
-    createPage(rentPayload, headers)
+    if(len(queryDatabase(Constants.BULLETIN_BOARD, headers, filters.getCreditCardFilter()).json()["results"]) == 0):
+        creditCardPayload = json.dumps(payloads.getCreditCardPayload())
+        createPage(creditCardPayload, headers)
+
+elif(currentDay.day == 21):
+    if(len(queryDatabase(Constants.BULLETIN_BOARD, headers, filters.getRentFilter()).json()["results"]) == 0):
+        rentPayload = json.dumps(payloads.getRentPayload())
+        createPage(rentPayload, headers)
 
 if((currentDay.month == 1 or currentDay.month == 7) and currentDay.day == 1):
-    uciEmailPayload = json.dumps(payloads.getUCIEmailPayload())
-    createPage(uciEmailPayload, headers)
+    if(len(queryDatabase(Constants.BULLETIN_BOARD, headers, filters.getUCIFilter()).json()["results"]) == 0):
+        uciEmailPayload = json.dumps(payloads.getUCIEmailPayload())
+        createPage(uciEmailPayload, headers)
 

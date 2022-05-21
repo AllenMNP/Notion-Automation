@@ -32,7 +32,7 @@ class Payload:
                 },
                 "Status": {
                     "select": {
-                        "name": "In Progress",
+                        "name": "Required",
                     }
                 },
                 "Difficulty": {
@@ -73,7 +73,7 @@ class Payload:
                 },
                 "Status": {
                     "select": {
-                        "name": "In Progress",
+                        "name": "Required",
                     }
                 },
                 "Difficulty": {
@@ -114,7 +114,7 @@ class Payload:
                 },
                 "Status": {
                     "select": {
-                        "name": "In Progress",
+                        "name": "Required",
                     }
                 },
                 "Difficulty": {
